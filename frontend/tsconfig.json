@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "baseUrl": "./src",
+    "paths": {
+      "utils/*": ["utils/*"],
+      "components/*": ["components/*"],
+      "core_components/*": ["core_components/*"],
+      "icons/*": ["icons/*"],
+      "hooks/*": ["hooks/*"],
+      "store/*": ["store/*"],
+      "layouts/*": ["layouts/*"],
+      "libs/*": ["libs/*"],
+      "routes/*": ["routes/*"],
+      "test_utils/*": ["test_utils/*"],
+      "theme/*": ["theme/*"],
+      "pages/*": ["pages/*"],
+      "types/*": ["types/*"]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
+}
