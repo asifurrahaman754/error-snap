@@ -1,6 +1,7 @@
 import { con } from "./connection.js";
 import createUserTable from "../tables/users.js";
 import createErrorLogsTable from "../tables/errorLogs.js";
+import createProjectTable from "../tables/project.js";
 
 con.connect(function (error) {
   if (error) {
@@ -12,4 +13,5 @@ con.connect(function (error) {
 
   createUserTable();
   createErrorLogsTable();
+  createProjectTable();
 });

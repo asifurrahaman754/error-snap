@@ -10,7 +10,8 @@ const authMiddleware = async (req, res, next) => {
     req.cookies.token || req.headers["authorization"]?.split(" ")[1];
 
   // test user
-  const userResult = await User.getUserWithEmail("asifurs@gmail.com");
+  const userResult = await User.getUserWithEmail("asifur@gmail.com");
+  User.setCurrentUser(userResult);
   req.errorsnapUser = userResult || null;
   next();
   return;

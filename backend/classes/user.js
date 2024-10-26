@@ -1,13 +1,17 @@
 import { con } from "../database/connection.js";
 
 class User {
-  constructor() {
-    this.table = "users";
+  static table = "users";
+  static currentUser = {};
+
+  static setCurrentUser(user) {
+    if (!this.currentUser?.id) {
+      this.currentUser = user;
+    }
   }
 
-  getUserWithEmail(email) {
-    const query = `SELECT * FROM ${this.table} WHERE email='${email}'`;
-
+  static getUserWithEmail(email) {
+    const query = `SELECT * FROM ${User.table} WHERE email='${email}'`;
     return new Promise((resolve, reject) => {
       con.query(query, function (error, results) {
         if (error) return reject(error);
@@ -17,5 +21,4 @@ class User {
   }
 }
 
-const user = new User();
-export default user;
+export default User;
