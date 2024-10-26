@@ -1,4 +1,4 @@
-const { con } = require("../database/connection");
+import { con } from "../database/connection.js";
 
 class User {
   constructor() {
@@ -17,6 +17,5 @@ class User {
   }
 }
 
-module.exports = {
-  User,
-};
+const user = new User();
+export default user;

@@ -1,5 +1,6 @@
-const { con } = require("./connection");
-const createUserTable = require("../tables/users");
+import { con } from "./connection.js";
+import createUserTable from "../tables/users.js";
+import createErrorLogsTable from "../tables/errorLogs.js";
 
 con.connect(function (error) {
   if (error) {
@@ -10,4 +11,5 @@ con.connect(function (error) {
   console.log("Database connected successfully");
 
   createUserTable();
+  createErrorLogsTable();
 });

@@ -1,11 +1,10 @@
-const { con } = require("../database/connection");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { User } = require("../classes/user");
+import { con } from "../database/connection.js";
+import User from "../classes/user.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const login = async function (req, res) {
+export const login = async function (req, res) {
   const { email, password } = req.body;
-  const user = new User();
 
   try {
     const userData = await user.getUserWithEmail(email);
@@ -52,7 +51,7 @@ const login = async function (req, res) {
   }
 };
 
-const register = function (req, res) {
+export const register = function (req, res) {
   const { username, email, mobile, nid_no, password } = req.body;
   const query = `INSERT INTO users (username, email, password, mobile, nid_no) VALUES (?, ?, ?, ?, ?)`;
   // hash password
@@ -96,7 +95,7 @@ const register = function (req, res) {
     });
 };
 
-const getLoggedInUser = (req, res) => {
+export const getLoggedInUser = (req, res) => {
   const token = req.cookies.token;
   if (!token) {
     return res
@@ -112,10 +111,8 @@ const getLoggedInUser = (req, res) => {
         .json({ success: false, message: "Unauthorized user!" });
     }
 
-    // get logged in user
-    const user = new User();
     try {
-      const { password, ...rest } = await user.getUserWithEmail(data?.email);
+      const { password, ...rest } = await User.getUserWithEmail(data?.email);
 
       if (!rest) {
         return res
@@ -135,10 +132,4 @@ const getLoggedInUser = (req, res) => {
       });
     }
   });
-};
-
-module.exports = {
-  login,
-  register,
-  getLoggedInUser,
 };

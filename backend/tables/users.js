@@ -1,6 +1,6 @@
-const executeTableQuery = require("../utils/executeTableQuery");
+import executeTableQuery from "../utils/executeTableQuery.js";
 
-function createUserTable() {
+export default function createUserTable() {
   const createTableQuery = `CREATE TABLE IF NOT EXISTS ${process.env.DB_NAME}.users (
         id INT NOT NULL AUTO_INCREMENT,
         username VARCHAR(50) NOT NULL,
@@ -12,5 +12,3 @@ function createUserTable() {
 
   executeTableQuery(createTableQuery, "users");
 }
-
-module.exports = createUserTable;

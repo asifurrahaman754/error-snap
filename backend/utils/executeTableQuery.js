@@ -1,6 +1,6 @@
-const { con } = require("../database/connection");
+import { con } from "../database/connection.js";
 
-function executeTableQuery(tableQuery, table) {
+export default function executeTableQuery(tableQuery, table) {
   con.query(tableQuery, function (error, results) {
     if (error) {
       console.log("Error in creating table", error);
@@ -12,5 +12,3 @@ function executeTableQuery(tableQuery, table) {
     }
   });
 }
-
-module.exports = executeTableQuery;
