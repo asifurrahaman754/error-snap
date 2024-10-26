@@ -1,3 +1,5 @@
+import { cssColor } from "utils/colors";
+
 export const BREAKPOINTS = {
   xs: 0,
   sm: 576,
@@ -141,6 +143,22 @@ const theme = {
         },
         icon: {
           color: "#FFFFFF",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            opacity: 0.9,
+          },
+        },
+        contained: {
+          backgroundColor: cssColor("secondary"),
+          color: cssColor("textPrimary"),
+        },
+        text: {
+          color: cssColor("secondary"),
         },
       },
     },
