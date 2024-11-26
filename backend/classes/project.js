@@ -17,6 +17,21 @@ class Project {
     });
   }
 
+  static update(projectId, data) {
+    const columns = Object.keys(data);
+    const values = Object.values(data);
+
+    const setClause = columns.map((col) => `${col}=?`).join(", ");
+    const query = `UPDATE ${Project.table} SET ${setClause} WHERE id=?`;
+
+    return new Promise((resolve, reject) => {
+      con.query(query, [...values, projectId], function (error, results) {
+        if (error) return reject(error);
+        resolve(results);
+      });
+    });
+  }
+
   static getUserProjects(filter) {
     const userId = User.currentUser?.id;
     let query = `SELECT p.* FROM ${ProjectTeam.table} pt JOIN ${Project.table} p ON pt.project_id = p.id WHERE pt.user_id = '${userId}' AND pt.is_approved = 1`;

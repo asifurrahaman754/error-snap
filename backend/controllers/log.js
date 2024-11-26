@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import Errorlog from "../classes/errorlog.js";
 import Project from "../classes/project.js";
 import Slack from "../classes/slack.js";
+import { getCurrentDate } from "../utils/date.js";
 
 export const sendProjectError = async (req, res) => {
   const { message, projectId, source, lineno, colno, stack, os, browser } =
@@ -18,6 +19,7 @@ export const sendProjectError = async (req, res) => {
   }
 
   const errorId = nanoid(8);
+  const currentDate = getCurrentDate();
   const values = {
     id: errorId,
     message,
@@ -29,11 +31,16 @@ export const sendProjectError = async (req, res) => {
     browser,
     stack,
     status: 0,
+    created_at: currentDate,
   };
 
   try {
     const results = await Errorlog.insert(values);
     const responseId = results.insertId ? results.insertId : errorId;
+
+    await Project.update(projectId, {
+      last_error_at: currentDate,
+    });
 
     res
       .status(201)

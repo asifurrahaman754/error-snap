@@ -11,9 +11,6 @@ export const sendTeamInvitation = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  console.log("email", email);
-  console.log("currentUser?.email", currentUser?.email);
-
   // check if sending invite to own self
   if (email === currentUser?.email) {
     return res
