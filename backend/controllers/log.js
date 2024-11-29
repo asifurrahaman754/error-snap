@@ -5,10 +5,25 @@ import Slack from "../classes/slack.js";
 import { getCurrentDate } from "../utils/date.js";
 
 export const sendProjectError = async (req, res) => {
-  const { message, projectId, source, lineno, colno, stack, os, browser } =
-    req.body;
+  const {
+    message,
+    projectId,
+    source,
+    lineno,
+    colno,
+    stack,
+    os,
+    browser,
+    type,
+  } = req.body;
 
-  if (!message || !projectId || !source || !stack) {
+  console.log("sdfsdf", message, projectId, source, stack, type);
+
+  if (type === "unhandledrejection") {
+    if (!projectId) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+  } else if (!message || !projectId || !source || !stack) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -22,7 +37,7 @@ export const sendProjectError = async (req, res) => {
   const currentDate = getCurrentDate();
   const values = {
     id: errorId,
-    message,
+    message: message || "",
     project_id: projectId,
     source,
     lineno,
