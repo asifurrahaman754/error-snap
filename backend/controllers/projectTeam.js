@@ -28,7 +28,7 @@ export const sendTeamInvitation = async (req, res) => {
   const project = await Project.getById(projectId);
   if (!project?.id) {
     return res.status(400).json({
-      message: "No project found with this name!",
+      message: "No project found with this id!",
     });
   }
 

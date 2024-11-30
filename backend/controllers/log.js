@@ -17,8 +17,6 @@ export const sendProjectError = async (req, res) => {
     type,
   } = req.body;
 
-  console.log("sdfsdf", message, projectId, source, stack, type);
-
   if (type === "unhandledrejection") {
     if (!projectId) {
       return res.status(400).json({ message: "Missing required fields" });
