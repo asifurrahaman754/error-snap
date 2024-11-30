@@ -21,7 +21,7 @@ export default class ErrorSnap {
   }
 
   initialize() {
-    console.log("Initilized ErrorSnap");
+    console.log("Initilized ErrorSnap with project id:", this.projectId);
     this.initErrorHandling();
   }
 
