@@ -14,12 +14,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(
-  cors({
-    credentials: true,
-    origin: [process.env.FRONTEND_LINK, "http://127.0.0.1:5500"],
-  })
-);
 
 // Specific CORS configuration for /error-logs
 app.use(
@@ -27,6 +21,12 @@ app.use(
   cors({
     credentials: true,
     origin: true,
+  })
+);
+app.use(
+  cors({
+    credentials: true,
+    origin: [process.env.FRONTEND_LINK, "http://127.0.0.1:5500"],
   })
 );
 
