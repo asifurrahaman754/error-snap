@@ -17,6 +17,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     credentials: true,
+    origin: [process.env.FRONTEND_LINK, "http://127.0.0.1:5500"],
+  })
+);
+
+// Specific CORS configuration for /error-logs
+app.use(
+  "/error-logs",
+  cors({
+    credentials: true,
     origin: true,
   })
 );
