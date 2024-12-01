@@ -4,9 +4,9 @@ dotend.config();
 import cookieParser from "cookie-parser";
 import express from "express";
 import bodyParser from "body-parser";
-import cors from "cors";
 import router from "./routes/index.js";
 import authMiddleware from "./middleware/auth.js";
+import { setCorsHeaders } from "./utils/cors.js";
 import("./database/createTables.js");
 
 const app = express();
@@ -14,21 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Specific CORS configuration for /error-logs
-app.use(
-  "/error-logs",
-  cors({
-    credentials: true,
-    origin: true,
-  })
-);
-app.use(
-  cors({
-    credentials: true,
-    origin: [process.env.FRONTEND_LINK, "http://127.0.0.1:5500"],
-  })
-);
+app.use(setCorsHeaders);
 
 app.use(authMiddleware);
 app.use("/", router);
