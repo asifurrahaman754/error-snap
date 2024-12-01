@@ -1,4 +1,5 @@
 import Project from "../classes/project.js";
+import ProjectTeam from "../classes/projectTeam.js";
 import Slack from "../classes/slack.js";
 import { WebClient } from "@slack/web-api";
 
@@ -80,8 +81,8 @@ export const getConnectedSlackDetails = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const userIsProjectOwner = await Project.getUserProjectById(projectId);
-  if (!userIsProjectOwner.length) {
+  const isProjectMember = await ProjectTeam.isProjectMember(projectId);
+  if (!isProjectMember.length) {
     return res.status(404).json({ message: "Slack details not found!" });
   }
 

@@ -41,20 +41,20 @@ export const sendTeamInvitation = async (req, res) => {
     return res.status(400).json({ message: "Member is already in the team!" });
   }
 
+  // send invitation mail
+  await MailService.sendMail({
+    subject: "Invitation to join the team :)",
+    to: user?.email,
+    text: `Hi, ${currentUser?.username} has sent you a team invitation for project ${project?.name}. Sign in to your ErrorSnap dashboard to accept the invitation.`,
+    html: `Hi, <b>${currentUser?.username}</b> has sent you a team invitation for project <b>${project?.name}</b>. Sign in to your ErrorSnap dashboard to accept the invitation.`,
+  });
+
   try {
     await ProjectTeam.insert({
       project_id: projectId,
       user_id: user?.id,
       invited_by: currentUser?.id,
       is_approved: 0,
-    });
-
-    // send invitation mail
-    await MailService.sendMail({
-      subject: "Invitation to join the team :)",
-      to: user?.email,
-      text: `Hi, ${currentUser?.username} has sent you a team invitation for project ${project?.name}. Sign in to your ErrorSnap dashboard to accept the invitation.`,
-      html: `Hi, <b>${currentUser?.username}</b> has sent you a team invitation for project <b>${project?.name}</b>. Sign in to your ErrorSnap dashboard to accept the invitation.`,
     });
 
     res.status(201).json({ message: "Invitation sent successfully" });
@@ -78,8 +78,8 @@ export const getTeamMembers = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const userIsProjectOwner = await Project.getUserProjectById(projectId);
-  if (!userIsProjectOwner.length) {
+  const isProjectMember = await ProjectTeam.isProjectMember(projectId);
+  if (!isProjectMember.length) {
     return res.status(404).json({ message: "Team members not found!" });
   }
 
@@ -98,8 +98,8 @@ export const getPendingMembers = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const userIsProjectOwner = await Project.getUserProjectById(projectId);
-  if (!userIsProjectOwner.length) {
+  const isProjectMember = await ProjectTeam.isProjectMember(projectId);
+  if (!isProjectMember.length) {
     return res.status(404).json({ message: "Pending members not found!" });
   }
 

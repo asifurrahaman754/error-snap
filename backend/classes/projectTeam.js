@@ -127,4 +127,21 @@ export default class ProjectTeam {
       });
     });
   }
+
+  static isProjectMember(projectId) {
+    const userId = User.currentUser?.id;
+    const checkSql = `SELECT * FROM ${ProjectTeam.table} WHERE user_id=? AND project_id = ? AND is_approved = 1`;
+    const checkParams = [userId, projectId];
+
+    return new Promise((resolve, reject) => {
+      con.query(checkSql, checkParams, (err, results) => {
+        if (err) {
+          console.error("Error executing query:", err);
+          return reject(err);
+        }
+
+        resolve(results);
+      });
+    });
+  }
 }

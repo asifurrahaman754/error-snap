@@ -62,8 +62,8 @@ export const getProjectById = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const userIsProjectOwner = await Project.getUserProjectById(projectId);
-  if (!userIsProjectOwner.length) {
+  const isProjectMember = await ProjectTeam.isProjectMember(projectId);
+  if (!isProjectMember.length) {
     return res.status(404).json({ message: "Project not found!" });
   }
 

@@ -3,6 +3,7 @@ import Errorlog from "../classes/errorlog.js";
 import Project from "../classes/project.js";
 import Slack from "../classes/slack.js";
 import { getCurrentDate } from "../utils/date.js";
+import ProjectTeam from "../classes/projectTeam.js";
 
 export const sendProjectError = async (req, res) => {
   const {
@@ -92,10 +93,10 @@ export const getError = async (req, res) => {
   try {
     const results = await Errorlog.selectById(errorId);
 
-    const userIsProjectOwner = await Project.getUserProjectById(
+    const isProjectMember = await ProjectTeam.isProjectMember(
       results?.project_id
     );
-    if (!userIsProjectOwner.length) {
+    if (!isProjectMember.length) {
       return res.status(404).json({ message: "Error not found!" });
     }
 
