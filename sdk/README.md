@@ -20,3 +20,5 @@ The **ErrorSnap SDK** allows you to easily integrate ErrorSnap error tracking in
 ```
 
 And you are good to go :)
+
+For testing purposes, I created a [demo page](https://error-snap-test.netlify.app/), where you can just put your project ID and test your errors.
