@@ -29,11 +29,11 @@ export default class Errorlog {
     let params = [projectId];
 
     if (filters.query) {
-      sql += ` AND message LIKE ?`;
-      params.push(`%${filters.query}%`);
+      sql += ` AND (message LIKE ? OR id = ?)`;
+      params.push(`%${filters.query}%`, `${filters.query}`);
     }
 
-    if (filters.status !== undefined) {
+    if (filters.status) {
       sql += ` AND status = ?`;
       params.push(Number(filters.status));
     }
