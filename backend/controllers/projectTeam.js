@@ -72,6 +72,15 @@ export const getAllInvitation = async (req, res) => {
   }
 };
 
+export const hasProjectInvitations = async (req, res) => {
+  try {
+    const results = await ProjectTeam.hasProjectInvitations();
+    res.status(201).json({ message: "", data: results });
+  } catch (error) {
+    res.status(500).json({ message: "Invitations check failed!" });
+  }
+};
+
 export const getTeamMembers = async (req, res) => {
   const { projectId } = req.params;
   if (!projectId) {

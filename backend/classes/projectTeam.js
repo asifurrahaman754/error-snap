@@ -144,4 +144,21 @@ export default class ProjectTeam {
       });
     });
   }
+
+  static hasProjectInvitations() {
+    const userId = User.currentUser?.id;
+    const checkSql = `SELECT * FROM ${ProjectTeam.table} WHERE user_id=? AND invited_by IS NOT NULL AND is_approved = 0`;
+    const checkParams = [userId];
+
+    return new Promise((resolve, reject) => {
+      con.query(checkSql, checkParams, (err, results) => {
+        if (err) {
+          console.error("Error executing query:", err);
+          return reject(err);
+        }
+
+        resolve(results?.length > 0);
+      });
+    });
+  }
 }

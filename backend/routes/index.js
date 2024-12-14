@@ -21,6 +21,7 @@ import {
   getAllInvitation,
   getPendingMembers,
   getTeamMembers,
+  hasProjectInvitations,
   removeTeamMember,
   sendTeamInvitation,
 } from "../controllers/projectTeam.js";
@@ -59,6 +60,7 @@ router.post("/remove-member/:memberId", removeTeamMember);
 router.get("/pending-members/:projectId", getPendingMembers);
 router.get("/all-invitation", getAllInvitation);
 router.get("/team-members/:projectId", getTeamMembers);
+router.get("/has-invitations", hasProjectInvitations);
 
 router.get("/slack/oauth/start", slackConnectInit);
 router.get("/slack/callback", slackConnectFinalize);
