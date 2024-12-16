@@ -9,13 +9,18 @@ The **ErrorSnap SDK** allows you to easily integrate ErrorSnap error tracking in
   `
 
 ```html
-<script src="https://errorsnap-sdk.netlify.app/"></script>
 <script>
-  const app = new ErrorSnap({
-     projectId: // enter your copied project,
-   });
-
-  app.initialize();
+  window.addEventListener('load', () => {
+    const script = document.createElement('script');
+    script.src = "https://errorsnap-sdk.netlify.app/";
+    script.onload = () => {
+      const app = new ErrorSnap({
+        projectId: "your-project-id", // Replace with your actual project ID
+      });
+      app.initialize();
+    };
+    document.body.appendChild(script);
+  });
 </script>
 ```
 
