@@ -1,5 +1,6 @@
 import { con } from "../database/connection.js";
 import User from "./user.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export default class Errorlog {
   static table = "errorlogs";
@@ -22,6 +23,21 @@ export default class Errorlog {
         resolve(results);
       });
     });
+  }
+
+  static uploadImage(imageData, errorId) {
+    cloudinary.uploader
+      .upload(imageData, {
+        folder: "errorsnap",
+      })
+      .then((result) => {
+        const sql = `UPDATE ${Errorlog.table} SET image= ? WHERE id = ?`;
+        con.query(sql, [result?.secure_url, errorId], (err) => {
+          if (err) {
+            console.error("Error adding image:", err);
+          }
+        });
+      });
   }
 
   static selectByProjectId(projectId, filters = {}) {

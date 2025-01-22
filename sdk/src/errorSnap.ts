@@ -1,3 +1,5 @@
+import { toPng } from "html-to-image";
+
 interface config {
   projectId: string;
 }
@@ -37,7 +39,6 @@ export default class ErrorSnap {
       });
     };
 
-    // Handle unhandled promise rejections
     window.onunhandledrejection = (event) => {
       this.logError({
         type: "unhandledrejection",
@@ -46,29 +47,6 @@ export default class ErrorSnap {
       });
     };
   }
-
-  // loadHtml2Canvas() {
-  //   return new Promise((resolve, reject) => {
-  //     if (window.html2canvas) {
-  //       resolve(window.html2canvas);
-  //     } else {
-  //       const script = document.createElement("script");
-  //       script.src =
-  //         "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-  //       script.onload = () => resolve(window.html2canvas);
-  //       script.onerror = () => reject(new Error("Failed to load html2canvas"));
-  //       document.head.appendChild(script);
-  //     }
-  //   });
-  // }
-
-  // captureScreenshot() {
-  //   return loadHtml2Canvas().then((html2canvas) => {
-  //     return html2canvas(document.body).then((canvas) => {
-  //       return canvas.toDataURL("image/png");
-  //     });
-  //   });
-  // }
 
   logError(errorData: errorData) {
     const browser = this.getBrowserInfo();
@@ -81,13 +59,24 @@ export default class ErrorSnap {
       timestamp: new Date().toISOString(),
     };
 
-    fetch(process.env.ERROR_LOGS_API_URL, {
-      method: "POST",
-      body: JSON.stringify(errorPayload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).catch((err) => console.error("Failed to log error:", err));
+    const targetElement = document.body;
+    let imageData = null;
+    toPng(targetElement)
+      .then((url) => {
+        imageData = url;
+      })
+      .catch((err) => {
+        console.error("Error taking screenshot:", err);
+      })
+      .finally(() => {
+        fetch(process.env.ERROR_LOGS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ ...errorPayload, image: imageData }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).catch((err) => console.error("Failed to log error:", err));
+      });
   }
 
   getBrowserInfo() {

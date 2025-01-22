@@ -15,6 +15,7 @@ export const sendProjectError = async (req, res) => {
     stack,
     os,
     browser,
+    image,
     type,
   } = req.body;
 
@@ -33,6 +34,11 @@ export const sendProjectError = async (req, res) => {
   }
 
   const errorId = nanoid(8);
+
+  if (image) {
+    Errorlog.uploadImage(image, errorId);
+  }
+
   const currentDate = getCurrentDate();
   const values = {
     id: errorId,
