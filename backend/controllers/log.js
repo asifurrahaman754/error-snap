@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import Errorlog from "../classes/errorlog.js";
 import Project from "../classes/project.js";
 import Slack from "../classes/slack.js";
-import { getCurrentDate } from "../utils/date.js";
+import { getCurrentDateTime } from "../utils/date.js";
 import ProjectTeam from "../classes/projectTeam.js";
 
 export const sendProjectError = async (req, res) => {
@@ -39,7 +39,7 @@ export const sendProjectError = async (req, res) => {
     Errorlog.uploadImage(image, errorId);
   }
 
-  const currentDate = getCurrentDate();
+  const currentDate = getCurrentDateTime();
   const values = {
     id: errorId,
     message: message || "",
@@ -53,6 +53,12 @@ export const sendProjectError = async (req, res) => {
     status: 0,
     created_at: currentDate,
   };
+
+  const duplicateError = await Errorlog.duplicateError(values);
+  if (duplicateError) {
+    await Errorlog.updateErrorTime(duplicateError?.id);
+    return res.status(201).json({ message: "Error updated successfully" });
+  }
 
   try {
     const results = await Errorlog.insert(values);

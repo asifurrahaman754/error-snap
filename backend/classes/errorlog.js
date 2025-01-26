@@ -1,4 +1,5 @@
 import { con } from "../database/connection.js";
+import { getCurrentDateTime } from "../utils/date.js";
 import User from "./user.js";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -25,6 +26,49 @@ export default class Errorlog {
     });
   }
 
+  static duplicateError(values) {
+    const { message, project_id, source, lineno, colno, os, browser, status } =
+      values;
+    let sql = `SELECT * FROM ${Errorlog.table} WHERE source = ? AND lineno = ? AND colno = ? AND project_id = ? AND browser = ? AND message = ? AND status = ? AND os = ?`;
+    const params = [
+      source,
+      lineno,
+      colno,
+      project_id,
+      browser,
+      message,
+      status,
+      os,
+    ];
+
+    return new Promise((resolve, reject) => {
+      con.query(sql, params, (err, results) => {
+        if (err) {
+          console.error("Error executing query:", err);
+          return reject(err);
+        }
+
+        resolve(results[0]);
+      });
+    });
+  }
+
+  static updateErrorTime(id) {
+    const currentDateTime = getCurrentDateTime();
+    const sql = `UPDATE ${Errorlog.table} SET created_at = ? WHERE id = ?`;
+
+    return new Promise((resolve, reject) => {
+      con.query(sql, [currentDateTime, id], (err, results) => {
+        if (err) {
+          console.error("Error executing query:", err);
+          return reject(err);
+        }
+
+        resolve(results);
+      });
+    });
+  }
+
   static uploadImage(imageData, errorId) {
     cloudinary.uploader
       .upload(imageData, {
@@ -41,17 +85,22 @@ export default class Errorlog {
   }
 
   static selectByProjectId(projectId, filters = {}) {
+    const { orderBy = "DESC", query, status } = filters;
     let sql = `SELECT * FROM ${Errorlog.table} WHERE project_id = ?`;
     let params = [projectId];
 
-    if (filters.query) {
+    if (query) {
       sql += ` AND (message LIKE ? OR id = ?)`;
-      params.push(`%${filters.query}%`, `${filters.query}`);
+      params.push(`%${query}%`, `${query}`);
     }
 
-    if (filters.status) {
+    if (status) {
       sql += ` AND status = ?`;
-      params.push(Number(filters.status));
+      params.push(Number(status));
+    }
+
+    if (orderBy) {
+      sql += ` ORDER BY created_at ${orderBy}`;
     }
 
     return new Promise((resolve, reject) => {
