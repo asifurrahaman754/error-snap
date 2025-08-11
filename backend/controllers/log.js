@@ -1,9 +1,55 @@
 import { nanoid } from "nanoid";
+import path from "path";
+import fs from "fs";
+import { __dirname } from "../utils/global.js";
+import sourceMap from "source-map";
 import Errorlog from "../classes/errorlog.js";
 import Project from "../classes/project.js";
 import Slack from "../classes/slack.js";
 import { getCurrentDateTime } from "../utils/date.js";
 import ProjectTeam from "../classes/projectTeam.js";
+
+async function resolveOriginalPosition({
+  source,
+  lineno,
+  colno,
+  projectId,
+  userId,
+}) {
+  const fileName = path.basename(source);
+  const mapPath = path.join(
+    __dirname,
+    "..",
+    "source-maps",
+    String(userId),
+    projectId,
+    `${fileName}.map`
+  );
+
+  if (!fs.existsSync(mapPath)) {
+    return {
+      source,
+      lineno,
+      colno,
+    };
+  }
+
+  const rawMap = fs.readFileSync(mapPath, "utf8");
+  const consumer = await new sourceMap.SourceMapConsumer(rawMap);
+
+  const originalPosition = consumer.originalPositionFor({
+    line: lineno,
+    column: colno,
+  });
+
+  consumer.destroy();
+
+  return {
+    source: originalPosition.source,
+    lineno: originalPosition.line,
+    colno: originalPosition.column,
+  };
+}
 
 export const sendProjectError = async (req, res) => {
   const {
@@ -40,13 +86,21 @@ export const sendProjectError = async (req, res) => {
   }
 
   const currentDate = getCurrentDateTime();
+  const result = await resolveOriginalPosition({
+    source,
+    lineno,
+    colno,
+    projectId,
+    userId: project?.user_id,
+  });
+
   const values = {
     id: errorId,
     message: message || "",
     project_id: projectId,
-    source,
-    lineno,
-    colno,
+    source: result.source,
+    lineno: result.lineno,
+    colno: result.colno,
     os,
     browser,
     stack,

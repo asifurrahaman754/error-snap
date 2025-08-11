@@ -1,4 +1,6 @@
 import { nanoid } from "nanoid";
+import path from "path";
+import fs from "fs";
 import ErrorsnapDb from "../classes/errorsnapdb.js";
 import Project from "../classes/project.js";
 import ProjectTeam from "../classes/projectTeam.js";
@@ -86,12 +88,24 @@ export const getUserProjectById = async (req, res) => {
   }
 };
 
+function deleteProjectSourceMaps(project) {
+  const sourceMapsPath = path.join(
+    "source-maps",
+    String(project?.user_id),
+    String(project?.id)
+  );
+
+  if (fs.existsSync(sourceMapsPath)) {
+    fs.rmSync(sourceMapsPath, { recursive: true, force: true });
+  }
+}
+
 export const deleteProject = async (req, res) => {
   const { projectId } = req.params;
 
   //check if this project is a logged in user project
-  const project = Project.getUserProjectById(projectId);
-  if (!project) {
+  const project = await Project.getUserProjectById(projectId);
+  if (!project.length) {
     return res.status(500).json({ message: "Project not found!" });
   }
 
@@ -104,8 +118,11 @@ export const deleteProject = async (req, res) => {
     // delete team members
     await ProjectTeam.deleteTeam(projectId);
 
+    // delete source maps
+    deleteProjectSourceMaps(project[0]);
+
     res.status(201).json({ message: "Project deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Project get failed!" });
+    res.status(500).json({ message: "Project delete failed!" });
   }
 };

@@ -9,6 +9,7 @@ const authMiddleware = async (req, res, next) => {
     "/error-logs",
     "/slack/callback",
     "/auth/get-loggedIn-user",
+    "/upload",
   ];
 
   if (publicRoutes.includes(req.path)) {

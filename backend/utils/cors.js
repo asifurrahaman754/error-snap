@@ -1,5 +1,5 @@
 export function setCorsHeaders(req, res, next) {
-  const allowedOrigins = [process.env.FRONTEND_LINK, "http://localhost:5173"];
+  const allowedOrigins = [process.env.FRONTEND_LINK, "http://127.0.0.1:3000"];
   const origin = req.headers.origin;
 
   if (req.method === "OPTIONS") {
