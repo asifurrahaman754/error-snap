@@ -17,7 +17,6 @@ export const upload = multer({
 
 export const uploadSourceMaps = async function (req, res) {
   const projectId = req.body.projectId;
-  console.log("Received projectId:", projectId);
 
   if (!projectId) {
     return res.status(400).json({ message: "Missing projectId field" });
