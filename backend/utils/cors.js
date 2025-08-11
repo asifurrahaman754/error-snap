@@ -1,9 +1,10 @@
 export function setCorsHeaders(req, res, next) {
   const allowedOrigins = [process.env.FRONTEND_LINK, "http://127.0.0.1:3000"];
   const origin = req.headers.origin;
+  const publicPaths = ["/error-logs", "/upload"];
 
   if (req.method === "OPTIONS") {
-    if (req.path === "/error-logs" || allowedOrigins.includes(origin)) {
+    if (publicPaths.includes(req.path) || allowedOrigins.includes(origin)) {
       res.setHeader(
         "Access-Control-Allow-Origin",
         req.path === "/error-logs" ? "*" : origin
