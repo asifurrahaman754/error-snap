@@ -24,7 +24,7 @@ export function setCorsHeaders(req, res, next) {
     }
   }
 
-  if (req.path === "/error-logs") {
+  if (publicPaths.includes(req.path)) {
     res.setHeader("Access-Control-Allow-Origin", "*");
   } else if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
